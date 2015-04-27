@@ -43,6 +43,7 @@ public class FindPasswd {
 		// 보내는 서버 주소
 		// 메일 제목 설정
 		String subject = "임시 비밀번호 입니다";
+		//String subject = "회원 가입을 축하합니다!";
 		// 받는사람 이메일 주소
 		final String from = "somewayur";
 		// 보내는사람 이름
@@ -79,7 +80,9 @@ public class FindPasswd {
 
 			msg.setSubject(subject, "UTF-8");
 			msg.setContent(getMailString(tmpPasswd) ,"text/HTML; charset=UTF-8");
-			//msg.setText(getMailString(tmpPasswd), "UTF-8");
+			//msg.setContent(getTemp() ,"text/HTML; charset=UTF-8");
+
+			
 			msg.setSentDate(new Date());
 
 			msg.setRecipients(Message.RecipientType.TO,
@@ -96,11 +99,19 @@ public class FindPasswd {
 		return tmpPasswd;
 	}
 
+	public String getTemp(){
+		StringBuffer sb = new StringBuffer();
+		sb.append("회원 가입을 축하합니다 "+email+ " 님!");
+		sb.append("다음 <a href=\"http://192.168.0.2:5001/Beautalk_Server/index2.jsp?category=user?division=confirm?data="+email+ "\"> 링크</a> 를 클릭하여 회원가입을 완료해주세요!! ");
+
+			return sb.toString();
+
+	}
 	public String getMailString(String passwd) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("임시 비밀번호는 : " + passwd);
 		sb.append(" 로그인 후 꼭 수정해주세요");
-		sb.append("<a href=\"http://192.168.0.2:5001/Beautalk_Server/index2.jsp?category=user?division=confirm?data="+email+ "\"> click here </a>");
+		//sb.append("<a href=\"http://192.168.0.2:5001/Beautalk_Server/index2.jsp?category=user?division=confirm?data="+email+ "\"> click here </a>");
 
 		System.out.println("이메알 내용 : " + sb.toString());
 		return sb.toString();

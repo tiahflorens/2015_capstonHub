@@ -1,5 +1,6 @@
 package work;
 
+import items.ReviewItem;
 import items.UserItem;
 
 import java.sql.Connection;
@@ -8,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class DBAdapter {
 	Statement stm, stm2;
@@ -217,5 +219,45 @@ public class DBAdapter {
 			e.printStackTrace();
 		}
 	}
+	
+	public ArrayList<ReviewItem> getReveiwList(int uid){
+		String q = "select rid,brandname, productname, pic from reviews";
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
 
+			ArrayList<ReviewItem> list = new ArrayList<ReviewItem>();
+			ResultSet r = p.executeQuery();
+			while(r.next())
+			list.add(new ReviewItem(r.getInt(1), r.getString(2),r.getString(3),r.getBytes(4)));
+			
+			return list;
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+			return null;
+		}
+		
+		
+	}
+	
+	public ArrayList<ReviewItem> getReveiwListByTag(int uid ,String tag){
+		String q = "select rid,brandname, productname, pic from reviews where productname=? or brandname=?";
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+
+			p.setString(1, tag);
+			p.setString(2, tag);
+			ArrayList<ReviewItem> list = new ArrayList<ReviewItem>();
+			ResultSet r = p.executeQuery();
+			while(r.next())
+			list.add(new ReviewItem(r.getInt(1), r.getString(2),r.getString(3),r.getBytes(4)));
+			return list;
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+			return null;
+		}
+		
+		
+	}
 }

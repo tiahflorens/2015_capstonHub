@@ -1,11 +1,14 @@
 package work;
-
+ 
+/**
+ * Created by PeterYoon on 3/25/15.
+ */
 public class Tags {
-//tagagagagagaag
-    public static final String SHAPE ="shape";
-     public static final String TYPE="type";
 
 
+
+
+    //preferes
     public static final String AUTO_LOGIN="autologin";
     public static final String USER_EMAIL="useremail";
     public static final String USER_NICKNAME="usernickname";
@@ -13,10 +16,14 @@ public class Tags {
     public static final String USER_PIC ="userpic";
     public static final String USER_PASSWD="userpasswd";
     public static final String USER_BIRTH = " userbirth";
+    public static final String SHAPE ="shape";
+    public static final String TYPE="type";
+
  // public static final String
 
 
 
+    //Category
     public static final String USER = "user";
     public static final String REVIEW = "review";
     public static final String BEAUTY = "beauty";
@@ -30,8 +37,16 @@ public class Tags {
     public static final int BC=2;
     public static final int BD=3;
 
-    public static final String REVEIW_WRITE="reviewwrite";
-    public static final String REVEIW_READ="reviewread";
+    //Division
+    public static final String REVIEW_WRITE="reviewwrite";
+    public static final String REVIEW_READ_SET ="reviewreadset";
+    public static final String REVIEW_READ_SINGLE="reviewreadsingle";
+    public static final String REVIEW_READ_RANK ="reveiwreadrank";
+    public static final String REVIEW_READ_SEARCH ="reviewreadsearch";
+
+
+
+
     public static final String REVIEW_LIKE="reviewlike";
 
     public static final String SIGN_IN="usersignin";
@@ -45,10 +60,17 @@ public class Tags {
     public static final String BEAUTY_READ ="beautyread";
     public static final String BEAUTY_CUTE ="beautycute";
 
+    public static final String PRODUCT_RANK ="productrank";
 
-    public static final String  MSG_TRY = "Please try later";
-    public static final String MSG_WAIT = "Please wait";
+    public static final String MSG_TRY = "Please try later";
+     public static final String ERROR_EMPTY_EMAIL="fill email please";
+    public static final String MSG_WAIT="please wait..";
+    public static final String ERROR_TRY_AGAIN =" please try again";
 
-	//public static final int
+
+
+
+//public static final int
+
 
 }

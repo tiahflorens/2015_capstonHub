@@ -16,8 +16,8 @@ public class User {
 
 	public String work(String div, String raw) {
 
-		UserItem user = gson.fromJson(raw, UserItem.class);
-		UserItem result;
+		UserItem result, user;
+		user = gson.fromJson(raw, UserItem.class);
 		switch (div) {
 		case Tags.SIGN_UP:
 			result = signUp(user);

@@ -18,17 +18,22 @@
 		String div = request.getHeader("division");
 		String data = request.getParameter("data");
 		String ss = null;
+		System.out.println(header +" , " + div);
 
 		if (header != null) {
 
 			if (header.equalsIgnoreCase("user")) {
 
 				ss= new User().work(div, data);
+			}else if(header.equalsIgnoreCase("review")){
+				ss = new Review().work(div, data);
 			}
 		}else if(data != null){
 			System.out.println("data is not null");
 				ss = new User().work(request.getParameter("division"), data);
 		}
+		
+		System.out.println("result : " + ss);
 	%>
 	<jsp:forward page="result.jsp">
 		<jsp:param name="result" value="<%=ss%>" />
