@@ -27,33 +27,63 @@ public class Review {
 		case Tags.REVIEW_READ_SEARCH:
 			result = getSearchResult(rev);
 			break;
+		case Tags.REVIEW_READ_RANK:
+			result = getRanks(rev);
+			break;
+		case Tags.REVIEW_WRITE:
+			result = saveReview(rev);
+			break;
+		case Tags.REVIEW_READ_SINGLE:
+			result = getDetails(rev);
+			break;
 		default:
 			result = new ReviewItem(2);
 		}
 
 		return gson.toJson(result);
 	}
-	public ReviewItem getSearchResult(ReviewItem rev){
-		System.out.println("getSearchResult " + rev.getTag() );
-		ArrayList<ReviewItem> list = db.getReveiwListByTag(rev.getId(), rev.getTag());
-		
+
+	public ReviewItem getDetails(ReviewItem rev) {
+		return db.getReviewItemByRid(rev.getId());
+	}
+
+	public ReviewItem saveReview(ReviewItem rev) {
+
+		if (db.saveReview(rev))
+			return new ReviewItem(true);
+		else
+
+			return new ReviewItem(false);
+
+	}
+
+	public ReviewItem getSearchResult(ReviewItem rev) {
+		System.out.println("getSearchResult " + rev.getTag());
+		ArrayList<ReviewItem> list = db.getReveiwListByTag(rev.getId(),
+				rev.getTag());
+
 		return new ReviewItem(list, list.get(list.size() - 1).getId());
-		
-		
+
 	}
 
 	public ReviewItem getNormalSet(ReviewItem rev) {
 		System.out.println("getNormalSet");
-		ArrayList<ReviewItem> list = db.getReveiwList(rev.getId());
-
-		// if(db!=null)
-
-		return new ReviewItem(list, list.get(list.size() - 1).getId());
+		ArrayList<ReviewItem> list = db
+				.getReveiwList(rev.getId(), rev.getIdx());
+		int index;
+		if (list.isEmpty())
+			index = 0;
+		else
+			index = list.get(list.size() - 1).getId();
+		return new ReviewItem(list, index);
 	}
 
 	public ReviewItem getRanks(ReviewItem rev) {
+
 		System.out.println("getRanks");
 
-		return null;
+		return new ReviewItem(db.getRankList(rev.getId(), Tags.SKINTONE),
+				db.getRankList(rev.getId(), Tags.SKINTYPE));
+
 	}
 }

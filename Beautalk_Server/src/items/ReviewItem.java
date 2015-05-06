@@ -7,13 +7,18 @@ import java.util.ArrayList;
  */
 public class ReviewItem {
 
-    private int price, idx, id;
+    private int price, idx, id,category;
     private String brandName, productName, nickName, memo, tag, title;
     private float rating;
     private byte[] pic;
 
     private ArrayList<ReviewItem> set, typeList, skinList;
+  
+    private boolean isDone;
 
+    public ReviewItem(boolean isDone) {
+        this.isDone = isDone;
+    }
 
     public ReviewItem(int id) {
         // ranking request ------>>
@@ -40,7 +45,7 @@ public class ReviewItem {
         this.idx = idx;
     }
 
-    public ReviewItem(String brandName, String productName, String memo, byte[] pic, float rating, String title, int uid, int price, String nickName) {
+    public ReviewItem(String brandName, String productName, String memo, byte[] pic, float rating, String title, int uid, int price, String nickName ,int category) {
         // write review ------->>
         this.brandName = brandName;
         this.productName = productName;
@@ -51,6 +56,7 @@ public class ReviewItem {
         this.id = uid;
         this.price = price;
         this.nickName = nickName;
+        this.category =category;
     }
 
     public ReviewItem(int price, String brandName, String productName, String nickName, String memo, String title, float rating, byte[] pic) {
@@ -83,7 +89,9 @@ public class ReviewItem {
         this.pic = pic;
     }
 
-
+    public int getCategory() {
+        return category;
+    }
     public int getPrice() {
         return price;
     }

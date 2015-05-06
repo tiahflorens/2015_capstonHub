@@ -32,10 +32,12 @@ public class Tags {
 
 
 
-    public static final int AC =0;
-    public static final int AD =1;
-    public static final int BC=2;
-    public static final int BD=3;
+    public static final int AC =1;
+    public static final int AD =2;
+    public static final int BC=3;
+    public static final int BD=4;
+    public static final int SKINTYPE = 11;
+    public static final int SKINTONE = 22;
 
     //Division
     public static final String REVIEW_WRITE="reviewwrite";

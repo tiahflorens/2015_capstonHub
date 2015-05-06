@@ -66,7 +66,7 @@ public class User {
 		if (type < 0)// type>0 , type instanceof Integer , not null
 			return new UserItem("JNI examine failed 1 ", false);
 
-		if (!db.updateUserInfo(user.getUid(), type, shape))
+		if (db.updateUserInfo(user.getUid(), type, shape))
 			return new UserItem(type, shape, "done", true);
 		else
 			return new UserItem("JNI examine failed 2 ", false);
@@ -84,8 +84,11 @@ public class User {
 
 	public UserItem signIn(UserItem user) {
 
-		if (db.isMatch(user.getEmail(), user.getPasswd()))
+		if (db.isMatch(user.getEmail(), user.getPasswd())){
+			db.updateDeviceId(user.getEmail(), user.getDevId());
 			return db.getUserInfo(user.getEmail());
+		}
+			
 		else
 			return new UserItem("input email and password are incorrect", false);
 

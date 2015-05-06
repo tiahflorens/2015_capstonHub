@@ -125,14 +125,8 @@ public class DBAdapter {
 			p.setString(3, user.getNickname());
 			p.setLong(4, user.getBirth());
 			p.setBytes(5, user.getPics());
-			int c = p.executeUpdate();
-			System.out.println("insert user : " + c);
-			if (c > 0)
-				return true;
-
-			else
-				return false;
-
+			p.executeUpdate();
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -160,12 +154,13 @@ public class DBAdapter {
 		}
 
 	}
-	public boolean updateUserInfo(String passwd , String email){
+
+	public boolean updateUserInfo(String passwd, String email) {
 		String q = "update users set passwd= ? where email=?";
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
 			p.setString(1, passwd);
-			p.setString(2,email);
+			p.setString(2, email);
 			System.out.println(p.toString());
 			return p.execute();
 		} catch (SQLException e) {
@@ -173,15 +168,17 @@ public class DBAdapter {
 			return false;
 		}
 	}
-	public boolean updateUserInfo(int uid, int type, int shape){
+
+	public boolean updateUserInfo(int uid, int type, int shape) {
 		String q = "update users set type=?, shape=? where uid=?";
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
 			p.setInt(1, type);
-			p.setInt(2,shape);
-			p.setInt(3,uid);
+			p.setInt(2, shape);
+			p.setInt(3, uid);
 			System.out.println(p.toString());
-			return p.execute();
+			p.execute();
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -197,11 +194,10 @@ public class DBAdapter {
 			ResultSet rs = p.executeQuery();
 			rs.next();
 
-			 UserItem user = new UserItem(rs.getInt(1),
-			 rs.getString(2),rs.getString(3), rs.getString(4), rs.getLong(5),
-			 rs.getBytes(6), rs.getInt(7), rs.getInt(8));
+			UserItem user = new UserItem(rs.getInt(1), rs.getString(2),
+					rs.getString(3), rs.getString(4), rs.getLong(5),
+					rs.getBytes(6), rs.getInt(7), rs.getInt(8));
 
-			
 			return user;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -219,45 +215,277 @@ public class DBAdapter {
 			e.printStackTrace();
 		}
 	}
-	
-	public ArrayList<ReviewItem> getReveiwList(int uid){
-		String q = "select rid,brandname, productname, pic from reviews";
+
+	public boolean saveReview(ReviewItem rev) {
+
+		System.out.println("db.saveReview");
+
+		int pid = isProductExist(rev.getProductName());
+
+		System.out.println("1  isProductExist ? : " + pid);
+
+		if (pid < 0) {
+			insertProduct(rev.getProductName(), rev.getBrandName(),
+					rev.getCategory());
+			pid = isProductExist(rev.getProductName());
+			System.out.println("2  isProductExist ? : " + pid);
+		}
+
+		int feature = getFeature(rev.getId());
+		float rating = getRating(pid, feature);
+		updateRating(pid, feature, rating + rev.getRating());
+
+		return insertReview(rev, pid);
+
+	}
+
+	public int getFeature(int uid) {
+		System.out.println("db.getFeature");
+		String q = "select type from users where uid=?";
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, uid);
+			System.out.println(p.toString());
+			ResultSet rs = p.executeQuery();
+			if (rs.next())
+				return rs.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
+		return -1;
+
+	}
+
+	public void updateRating(int pid, int feature, float rating) {
+		String q = "update products set "+getKeyword(feature)+"=? where pid=?";
+
+		System.out.println("db.updateRating");
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setFloat(1, rating);
+			p.setInt(2, pid);
+			System.out.println(p.toString());
+
+			p.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public float getRating(int pid, int feature) {
+		System.out.println("db.getRating");
+
+		String q = "select " + getKeyword(feature)
+				+ " from products where pid=?";
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, pid);
+			System.out.println(p.toString());
+			ResultSet rs = p.executeQuery();
+			if (rs.next())
+				return rs.getFloat(1);
+			else
+				return -1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
+	public boolean insertReview(ReviewItem rev, int pid) {
+		System.out.println("db.insertReview");
+		String q = "insert into reviews (pid,uid,rating,title,memo,price, nick,pic) values(?,?,?,?,?,?,?,?)";
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, pid);
+			p.setInt(2, rev.getId());
+			p.setFloat(3, rev.getRating());
+			p.setString(4, rev.getTitle());
+			p.setString(5, rev.getMemo());
+			p.setInt(6, rev.getPrice());
+			p.setString(7, rev.getNickName());
+			p.setBytes(8, rev.getPic());
+
+			p.execute();
+
+			return true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+	}
+
+	public int isProductExist(String pname) {
+		String q = "select pid from products where productname=?";
+
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setString(1, pname);
+
+			ResultSet rs = p.executeQuery();
+
+			if (rs.next())
+				return rs.getInt(1);
+			else
+				return -1;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
+	public void insertProduct(String pname, String bname, int category) {
+		String q = "insert into products (brandname,productname,category) values(?,?,?)";
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setString(1, bname);
+			p.setString(2, pname);
+			p.setInt(3, category);
+
+			p.execute();
+			// return true;
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+			// return false;
+		}
+
+	}
+
+	public ArrayList<ReviewItem> getReveiwList(int uid, int idx) {
+		String q = " select r.rid, p.brandname , p.productname , r.pic "
+				+ "from reviews r ,products p"
+				+ " where (select type from users where uid=r.uid)=(select type from users where uid=?)"
+				+ "and r.rid>= ?;";
+		System.out.println("db.getReviewList");
+
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, uid);
+			p.setInt(2, idx);
 			ArrayList<ReviewItem> list = new ArrayList<ReviewItem>();
+			System.out.println(p.toString());
 			ResultSet r = p.executeQuery();
-			while(r.next())
-			list.add(new ReviewItem(r.getInt(1), r.getString(2),r.getString(3),r.getBytes(4)));
-			
+
+			while (r.next()) {
+				if (list.size() > 20)
+					break;
+
+				list.add(new ReviewItem(r.getInt(1), r.getString(2), r
+						.getString(3), r.getBytes(4)));
+			}
+
 			return list;
 		} catch (SQLException e) {
 
 			e.printStackTrace();
 			return null;
 		}
-		
-		
+
 	}
-	
-	public ArrayList<ReviewItem> getReveiwListByTag(int uid ,String tag){
-		String q = "select rid,brandname, productname, pic from reviews where productname=? or brandname=?";
+
+	public ArrayList<ReviewItem> getReveiwListByTag(int uid, String tag) {
+
+		String q = " select r.rid, p.brandname , p.productname , r.pic "
+				+ "from reviews r ,products p"
+				+ " where (select type from users where uid=r.uid)=(select type from users where uid=?) and"
+				+ "p.productname=? or p.brandname=?;";
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
-
-			p.setString(1, tag);
+			p.setInt(1, uid);
 			p.setString(2, tag);
+			p.setString(3, tag);
 			ArrayList<ReviewItem> list = new ArrayList<ReviewItem>();
+			System.out.println("db.getReviewListByTag");
+			System.out.println(p.toString());
 			ResultSet r = p.executeQuery();
-			while(r.next())
-			list.add(new ReviewItem(r.getInt(1), r.getString(2),r.getString(3),r.getBytes(4)));
+			while (r.next())
+				list.add(new ReviewItem(r.getInt(1), r.getString(2), r
+						.getString(3), r.getBytes(4)));
 			return list;
 		} catch (SQLException e) {
 
 			e.printStackTrace();
 			return null;
 		}
-		
-		
 	}
+
+	public ReviewItem getReviewItemByRid(int rid) {
+		String q = " select r.price , p.brandname , p.productname , r.nick , r.memo , r.title, r.rating , r.pic "
+				+ "from reviews r ,products p " + "where r.rid=?";
+
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, rid);
+			ResultSet rs = p.executeQuery();
+			if (rs.next()) {
+				ReviewItem rev = new ReviewItem(rs.getInt(1), rs.getString(2),
+						rs.getString(3), rs.getString(4), rs.getString(5),
+						rs.getString(6), rs.getFloat(7), rs.getBytes(8));
+
+				return rev;
+			}
+			return null;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	public String getKeyword(int feature) {
+		switch (feature) {
+		case Tags.AC:
+			return "ratingA";
+		case Tags.AD:
+			return "ratingB";
+		case Tags.BC:
+			return "ratingC";
+		case Tags.BD:
+			return "ratingD";
+
+		default:
+			return null;
+		}
+	}
+
+	public ArrayList<ReviewItem> getRankList(int uid, int category) {
+
+		int feature = getFeature(uid);
+		String keyword = getKeyword(feature);
+		String q = "select m.pid,m.brandname , m.productname "
+				+ "from (select pid,brandname,productname, "
+				+ keyword
+				+ " from products where "+keyword+">-1 and category = ?) as m order by "
+				+ keyword + " desc;";
+
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, category);
+			System.out.println(q);
+			ResultSet rs = p.executeQuery();
+			ArrayList<ReviewItem> list = new ArrayList<>();
+			while (rs.next()) {
+				if (list.size() > 3)
+					break;
+
+				list.add(new ReviewItem(rs.getInt(1), rs.getString(2), rs
+						.getString(3), null));
+
+			}
+
+			return list;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 }
