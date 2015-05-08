@@ -60,6 +60,9 @@ public class Tags {
 
     public static final String BEAUTY_WRITE = "beautywrite";
     public static final String BEAUTY_READ ="beautyread";
+    public static final String BEAUTY_READALL ="beautyreadall";
+    public static final String BEAUTY_COMMENT="beautycomment";
+
     public static final String BEAUTY_CUTE ="beautycute";
 
     public static final String PRODUCT_RANK ="productrank";

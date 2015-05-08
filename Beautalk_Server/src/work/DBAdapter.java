@@ -1,5 +1,7 @@
 package work;
 
+import items.BeauTalkItem;
+import items.CommentItem;
 import items.ReviewItem;
 import items.UserItem;
 
@@ -258,7 +260,8 @@ public class DBAdapter {
 	}
 
 	public void updateRating(int pid, int feature, float rating) {
-		String q = "update products set "+getKeyword(feature)+"=? where pid=?";
+		String q = "update products set " + getKeyword(feature)
+				+ "=? where pid=?";
 
 		System.out.println("db.updateRating");
 		try {
@@ -459,10 +462,9 @@ public class DBAdapter {
 		int feature = getFeature(uid);
 		String keyword = getKeyword(feature);
 		String q = "select m.pid,m.brandname , m.productname "
-				+ "from (select pid,brandname,productname, "
-				+ keyword
-				+ " from products where "+keyword+">-1 and category = ?) as m order by "
-				+ keyword + " desc;";
+				+ "from (select pid,brandname,productname, " + keyword
+				+ " from products where " + keyword
+				+ ">-1 and category = ?) as m order by " + keyword + " desc;";
 
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
@@ -488,4 +490,131 @@ public class DBAdapter {
 		return null;
 	}
 
+	public void insertBeautalk(BeauTalkItem item) {
+		System.out.println("db.insertBeautalk");
+
+		String q = "insert into beautalk (nickname,title,memo,pic) values(?,?,?,?)";
+
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setString(1, item.getNickname());
+			p.setString(2, item.getTitle());
+			p.setString(3, item.getMemo());
+			System.out.println(p.toString());
+			p.setBytes(4, item.getPic());
+
+			p.execute();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public ArrayList<BeauTalkItem> getBeauty(int idx) {
+		System.out.println("db.getBeauty");
+		String q = "select * from beautalk where bid>=?";
+		ArrayList<BeauTalkItem> list = new ArrayList<>();
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, idx);
+			ResultSet rs = p.executeQuery();
+
+			while (rs.next()) {
+				list.add(new BeauTalkItem(rs.getInt(1), rs.getBytes(5), rs
+						.getString(3), rs.getString(2), rs.getString(4), 추천인가져오기(rs.getInt(1))));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	public BeauTalkItem getBeautyById(int bid){
+		System.out.println("db.getBeautyById");
+		String q ="select * from beautalk where bid =?";
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, bid);
+			ResultSet rs = p.executeQuery();
+
+			if(rs.next()) {
+				return new BeauTalkItem(rs.getInt(1), rs.getBytes(5), rs
+						.getString(3), rs.getString(2), rs.getString(4), 추천인가져오기(rs.getInt(1)),getCommentsById(bid) );
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	public ArrayList<Integer> 추천인가져오기(int bid){
+		System.out.println("db.추천인가져오기");
+		String q = "select uid from cutes where bid=?";
+		ArrayList<Integer> list= new ArrayList<>();
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, bid);
+			ResultSet rs = p.executeQuery();
+			while(rs.next()){
+				list.add(rs.getInt(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	public void insertComment(CommentItem item){
+		
+		String q = "insert into comments (bid,uid,comment) values(?,?,?)";
+		System.out.println("db.insertcomment");
+ 		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, item.getBid());
+			p.setInt(2, item.getUid());
+			p.setString(3, item.getComment());
+			System.out.println(p.toString());
+			p.execute();
+			
+		} catch (SQLException e) {
+ 			e.printStackTrace();
+		}
+	}
+	
+	public ArrayList<CommentItem> getCommentsById(int bid){
+		System.out.println("db.getCommentById");
+		String q ="select u.nick , u.pic , c.comment from users u, comments c where c.bid=?";
+		ArrayList<CommentItem> list = new ArrayList<CommentItem>();
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, bid);
+			
+			ResultSet rs = p.executeQuery();
+			while(rs.next()){
+				list.add(new CommentItem(rs.getString(1), rs.getString(3), rs.getBytes(2)));
+			}
+			
+		} catch (SQLException e) {
+ 			e.printStackTrace();
+		}
+		return list;
+		
+	}
+	
+	public void insertCute(int bid, int uid){
+		System.out.println("db.insertCute");
+		String q = "insert into cutes values(?,?)";
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, bid);
+			p.setInt(2, uid);
+			p.execute();
+		} catch (SQLException e) {
+ 			e.printStackTrace();
+		}
+	}
+	
+	
 }
