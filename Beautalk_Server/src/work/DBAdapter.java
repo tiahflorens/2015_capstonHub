@@ -585,7 +585,7 @@ public class DBAdapter {
 	
 	public ArrayList<CommentItem> getCommentsById(int bid){
 		System.out.println("db.getCommentById");
-		String q ="select u.nick , u.pic , c.comment from users u, comments c where c.bid=?";
+		String q ="select u.nick , u.pic , c.comment from users u, comments c where c.bid=? and c.uid=u.uid";
 		ArrayList<CommentItem> list = new ArrayList<CommentItem>();
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
@@ -610,10 +610,38 @@ public class DBAdapter {
 			PreparedStatement p = conn.prepareStatement(q);
 			p.setInt(1, bid);
 			p.setInt(2, uid);
+			System.out.println(p.toString());
 			p.execute();
 		} catch (SQLException e) {
  			e.printStackTrace();
 		}
+	}
+	public void deleteCute(int bid, int uid){
+		System.out.println("db.deletecute");
+		String q = "delete from cutes where bid=? and uid=?";
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			p.setInt(1, bid);
+			p.setInt(2, uid);
+			System.out.println(p.toString());
+			p.execute();
+		} catch (SQLException e) {
+ 			e.printStackTrace();
+		}
+	}
+	
+	public ArrayList<String> getDid(){
+		ArrayList<String> list = new ArrayList<String>();
+		String q= "select did from users";
+		try {
+			PreparedStatement p = conn.prepareStatement(q);
+			ResultSet rs = p.executeQuery();
+			while(rs.next())
+				list.add(rs.getString(1));
+		} catch (SQLException e) {
+ 			e.printStackTrace();
+		}
+		return list;
 	}
 	
 	

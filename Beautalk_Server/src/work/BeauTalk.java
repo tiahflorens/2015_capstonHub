@@ -33,6 +33,7 @@ public class BeauTalk {
 			db.insertBeautalk(beauty);
 			return null;
 		case Tags.BEAUTY_CUTE:
+			cute(beauty);
 			return null;
 		case Tags.BEAUTY_READALL:
 			return readAll(beauty.getId());
@@ -44,6 +45,13 @@ public class BeauTalk {
 			return null;
 		}
 
+	}
+	
+	public void cute(BeauTalkItem item){
+		if(item.isCute())
+			db.insertCute(item.getIdx(), item.getId());
+		else
+			db.deleteCute(item.getIdx(), item.getId());
 	}
 	
 	public String read(int _idx){
