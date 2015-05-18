@@ -15,15 +15,30 @@ import java.util.ArrayList;
 
 public class DBAdapter {
 	Statement stm, stm2;
-	String DB_URL = "jdbc:mysql://127.0.0.1:3306/test?useUnicode=true& useUnicode=true&characterEncoding=euc_kr";
+	String DB_URL = "jdbc:mysql://127.0.0.1:3306/we?useUnicode=true& useUnicode=true&characterEncoding=euc_kr";
 	String DB_USER = "root";
 	String DB_PASSWORD = "zmfkdns";
 	Connection conn;
 
 	// 테이블은 id + json
 
+	public byte[] test(){
+	
+		String q = "select pic from users";
+		try {
+			ResultSet rs =stm.executeQuery(q);
+			if(rs.next())
+			return rs.getBytes(1);
+		} catch (SQLException e) {
+ 			e.printStackTrace();
+		}
+		return null;
+	}
 	public DBAdapter() {
 
+		String DB_URL = "jdbc:mysql://127.0.0.1:3306/we?useUnicode=true& useUnicode=true&characterEncoding=euc_kr";
+		String DB_USER = "root";
+		String DB_PASSWORD = "zmfkdnstkseh";
 		try {
 			Class.forName("org.gjt.mm.mysql.Driver");
 			conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
@@ -362,8 +377,9 @@ public class DBAdapter {
 	public ArrayList<ReviewItem> getReveiwList(int uid, int idx) {
 		String q = " select r.rid, p.brandname , p.productname , r.pic "
 				+ "from reviews r ,products p"
-				+ " where (select type from users where uid=r.uid)=(select type from users where uid=?)"
-				+ "and r.rid>= ?;";
+				+ " where (select type from users where uid=r.uid)=(select type from users where uid=?) "
+				+ "and r.pid=p.pid "
+				+ "and r.rid>?;";
 		System.out.println("db.getReviewList");
 
 		try {

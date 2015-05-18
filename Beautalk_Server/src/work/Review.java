@@ -61,7 +61,12 @@ public class Review {
 		System.out.println("getSearchResult " + rev.getTag());
 		ArrayList<ReviewItem> list = db.getReveiwListByTag(rev.getId(),
 				rev.getTag());
-
+		int index;
+		if (list.isEmpty())
+			index = 0;
+		else
+			index = list.get(list.size() - 1).getId();
+		
 		return new ReviewItem(list, list.get(list.size() - 1).getId());
 
 	}

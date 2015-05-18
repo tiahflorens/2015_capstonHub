@@ -47,7 +47,7 @@
 			ss = new User().work(request.getParameter("division"), data);
 		}
 
-		System.out.println("result : " + ss);
+		//System.out.println("result : " + ss);
 	%>
 	<jsp:forward page="result.jsp">
 		<jsp:param name="result" value="<%=ss%>" />
