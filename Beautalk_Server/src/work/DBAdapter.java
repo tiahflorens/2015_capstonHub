@@ -237,14 +237,15 @@ public class DBAdapter {
 
 		System.out.println("db.saveReview");
 
-		int pid = isProductExist(rev.getProductName());
+		int pid = isProductExist(rev.getBrandName() , rev.getProductName());
 
 		System.out.println("1  isProductExist ? : " + pid);
 
 		if (pid < 0) {
 			insertProduct(rev.getProductName(), rev.getBrandName(),
 					rev.getCategory());
-			pid = isProductExist(rev.getProductName());
+			
+			pid = isProductExist(rev.getBrandName() ,rev.getProductName());
 			System.out.println("2  isProductExist ? : " + pid);
 		}
 
@@ -336,8 +337,10 @@ public class DBAdapter {
 
 	}
 
-	public int isProductExist(String pname) {
+	public int isProductExist(String bname, String pname) {
+		//TODO
 		String q = "select pid from products where productname=?";
+		q="select pid from products where productname=? and brandname=?";
 
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
@@ -380,6 +383,15 @@ public class DBAdapter {
 				+ " where (select type from users where uid=r.uid)=(select type from users where uid=?) "
 				+ "and r.pid=p.pid "
 				+ "and r.rid>?;";
+		
+		//TODO
+		q = " select r.rid, r.title , p.productname , r.pic "
+				+ "from reviews r ,products p"
+				+ " where (select type from users where uid=r.uid)=(select type from users where uid=?) "
+				+ "and r.pid=p.pid "
+				+ "and r.rid>?;";
+		
+		
 		System.out.println("db.getReviewList");
 
 		try {
@@ -412,6 +424,7 @@ public class DBAdapter {
 		String q = " select r.rid, p.brandname , p.productname , r.pic "
 				+ "from reviews r ,products p"
 				+ " where (select type from users where uid=r.uid)=(select type from users where uid=?) and"
+				+ " r.pid = p.pid and " //TODO
 				+ "p.productname=? or p.brandname=?;";
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
@@ -435,7 +448,9 @@ public class DBAdapter {
 
 	public ReviewItem getReviewItemByRid(int rid) {
 		String q = " select r.price , p.brandname , p.productname , r.nick , r.memo , r.title, r.rating , r.pic "
-				+ "from reviews r ,products p " + "where r.rid=?";
+				+ "from reviews r ,products p " 
+				+ "where r.rid=? and " 		
+				+ "r.pid=p.pid"; //TODO
 
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
@@ -489,7 +504,7 @@ public class DBAdapter {
 			ResultSet rs = p.executeQuery();
 			ArrayList<ReviewItem> list = new ArrayList<>();
 			while (rs.next()) {
-				if (list.size() > 3)
+				if (list.size() == 3) //TODO
 					break;
 
 				list.add(new ReviewItem(rs.getInt(1), rs.getString(2), rs
@@ -499,8 +514,7 @@ public class DBAdapter {
 
 			return list;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+ 			e.printStackTrace();
 		}
 
 		return null;

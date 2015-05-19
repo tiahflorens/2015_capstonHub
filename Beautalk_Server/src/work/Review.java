@@ -67,7 +67,7 @@ public class Review {
 		else
 			index = list.get(list.size() - 1).getId();
 		
-		return new ReviewItem(list, list.get(list.size() - 1).getId());
+		return new ReviewItem(list, index);
 
 	}
 

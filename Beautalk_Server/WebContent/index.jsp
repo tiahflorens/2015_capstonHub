@@ -17,6 +17,7 @@
 		request.setCharacterEncoding("utf-8");
 
 		Examine e = new Examine();
+
 		e.test();
 	%>
 
