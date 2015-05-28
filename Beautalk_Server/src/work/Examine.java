@@ -14,16 +14,29 @@ public class Examine {
 	public native int exam(String path);
 
 	static {
-		System.loadLibrary("Examine");
+		System.loadLibrary("asdf");
 	}
 	
+	
+	public void test2(){
+		
+		System.out.println("run test");
+		final String name ="image";
+		final String path ="D:\\busdata\\" + name +".jpg";	
+		
+  		
+		int result = -1;
+		result= exam(path);
+		System.out.println("result : "+ result);
+	
+	
+	}
 	public void test(){
 		System.out.println("run test");
 		
 		DBAdapter db= new DBAdapter();
-		 
 		byte[] bytes = db.test();
-		final String name ="peter";
+		final String name ="image";
 		final String path ="D:\\busdata\\" + name +".jpg";
  		try {
 			FileOutputStream out = new FileOutputStream(path);
@@ -40,8 +53,9 @@ public class Examine {
 	
  		System.out.println("create jpg done");
  		
-		int result = exam(path);
-		System.out.println(result);
+		int result = -1;
+		result= exam(path);
+		System.out.println("result : "+ result);
 	}
 
 }

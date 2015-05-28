@@ -18,7 +18,7 @@
 
 		Examine e = new Examine();
 
-		e.test();
+		e.test2();
 	%>
 
 

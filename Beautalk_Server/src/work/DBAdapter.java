@@ -22,18 +22,19 @@ public class DBAdapter {
 
 	// 테이블은 id + json
 
-	public byte[] test(){
-	
+	public byte[] test() {
+
 		String q = "select pic from users";
 		try {
-			ResultSet rs =stm.executeQuery(q);
-			if(rs.next())
-			return rs.getBytes(1);
+			ResultSet rs = stm.executeQuery(q);
+			if (rs.next())
+				return rs.getBytes(1);
 		} catch (SQLException e) {
- 			e.printStackTrace();
+			e.printStackTrace();
 		}
 		return null;
 	}
+
 	public DBAdapter() {
 
 		String DB_URL = "jdbc:mysql://127.0.0.1:3306/we?useUnicode=true& useUnicode=true&characterEncoding=euc_kr";
@@ -237,15 +238,15 @@ public class DBAdapter {
 
 		System.out.println("db.saveReview");
 
-		int pid = isProductExist(rev.getBrandName() , rev.getProductName());
+		int pid = isProductExist(rev.getBrandName(), rev.getProductName());
 
 		System.out.println("1  isProductExist ? : " + pid);
 
 		if (pid < 0) {
 			insertProduct(rev.getProductName(), rev.getBrandName(),
 					rev.getCategory());
-			
-			pid = isProductExist(rev.getBrandName() ,rev.getProductName());
+
+			pid = isProductExist(rev.getBrandName(), rev.getProductName());
 			System.out.println("2  isProductExist ? : " + pid);
 		}
 
@@ -254,6 +255,10 @@ public class DBAdapter {
 		updateRating(pid, feature, rating + rev.getRating());
 
 		return insertReview(rev, pid);
+
+	}
+
+	public void updateRating(int pid, float rating) {
 
 	}
 
@@ -281,6 +286,7 @@ public class DBAdapter {
 
 		System.out.println("db.updateRating");
 		try {
+
 			PreparedStatement p = conn.prepareStatement(q);
 			p.setFloat(1, rating);
 			p.setInt(2, pid);
@@ -338,13 +344,14 @@ public class DBAdapter {
 	}
 
 	public int isProductExist(String bname, String pname) {
-		//TODO
+		// TODO
 		String q = "select pid from products where productname=?";
-		q="select pid from products where productname=? and brandname=?";
+		q = "select pid from products where productname=? and brandname=?";
 
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
 			p.setString(1, pname);
+			p.setString(2, bname);
 
 			ResultSet rs = p.executeQuery();
 
@@ -381,17 +388,14 @@ public class DBAdapter {
 		String q = " select r.rid, p.brandname , p.productname , r.pic "
 				+ "from reviews r ,products p"
 				+ " where (select type from users where uid=r.uid)=(select type from users where uid=?) "
-				+ "and r.pid=p.pid "
-				+ "and r.rid>?;";
-		
-		//TODO
+				+ "and r.pid=p.pid " + "and r.rid>?;";
+
+		// TODO
 		q = " select r.rid, r.title , p.productname , r.pic "
 				+ "from reviews r ,products p"
 				+ " where (select type from users where uid=r.uid)=(select type from users where uid=?) "
-				+ "and r.pid=p.pid "
-				+ "and r.rid>?;";
-		
-		
+				+ "and r.pid=p.pid " + "and r.rid>?;";
+
 		System.out.println("db.getReviewList");
 
 		try {
@@ -424,7 +428,7 @@ public class DBAdapter {
 		String q = " select r.rid, p.brandname , p.productname , r.pic "
 				+ "from reviews r ,products p"
 				+ " where (select type from users where uid=r.uid)=(select type from users where uid=?) and"
-				+ " r.pid = p.pid and " //TODO
+				+ " r.pid = p.pid and " // TODO
 				+ "p.productname=? or p.brandname=?;";
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
@@ -448,9 +452,9 @@ public class DBAdapter {
 
 	public ReviewItem getReviewItemByRid(int rid) {
 		String q = " select r.price , p.brandname , p.productname , r.nick , r.memo , r.title, r.rating , r.pic "
-				+ "from reviews r ,products p " 
-				+ "where r.rid=? and " 		
-				+ "r.pid=p.pid"; //TODO
+				+ "from reviews r ,products p "
+				+ "where r.rid=? and "
+				+ "r.pid=p.pid"; // TODO
 
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
@@ -504,7 +508,7 @@ public class DBAdapter {
 			ResultSet rs = p.executeQuery();
 			ArrayList<ReviewItem> list = new ArrayList<>();
 			while (rs.next()) {
-				if (list.size() == 3) //TODO
+				if (list.size() == 3) // TODO
 					break;
 
 				list.add(new ReviewItem(rs.getInt(1), rs.getString(2), rs
@@ -514,7 +518,7 @@ public class DBAdapter {
 
 			return list;
 		} catch (SQLException e) {
- 			e.printStackTrace();
+			e.printStackTrace();
 		}
 
 		return null;
@@ -543,16 +547,16 @@ public class DBAdapter {
 
 	public ArrayList<BeauTalkItem> getBeauty(int idx) {
 		System.out.println("db.getBeauty");
-		String q = "select * from beautalk where bid>=?";
+		String q = "select bid,pic,nickname from beautalk where bid>=?";
 		ArrayList<BeauTalkItem> list = new ArrayList<>();
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
 			p.setInt(1, idx);
 			ResultSet rs = p.executeQuery();
 
-			while (rs.next()) {
-				list.add(new BeauTalkItem(rs.getInt(1), rs.getBytes(5), rs
-						.getString(3), rs.getString(2), rs.getString(4), 추천인가져오기(rs.getInt(1))));
+			while (rs.next()) { //TODO
+				list.add(new BeauTalkItem(rs.getInt(1), rs.getBytes(2), rs
+						.getString(3), 추천인가져오기(rs.getInt(1))));
 			}
 
 		} catch (SQLException e) {
@@ -560,35 +564,37 @@ public class DBAdapter {
 		}
 		return list;
 	}
-	public BeauTalkItem getBeautyById(int bid){
+
+	public BeauTalkItem getBeautyById(int bid) {
 		System.out.println("db.getBeautyById");
-		String q ="select * from beautalk where bid =?";
+		String q = "select * from beautalk where bid =?";
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
 			p.setInt(1, bid);
 			ResultSet rs = p.executeQuery();
 
-			if(rs.next()) {
-				return new BeauTalkItem(rs.getInt(1), rs.getBytes(5), rs
-						.getString(3), rs.getString(2), rs.getString(4), 추천인가져오기(rs.getInt(1)),getCommentsById(bid) );
+			if (rs.next()) {
+				return new BeauTalkItem(rs.getInt(1), rs.getBytes(5),
+						rs.getString(3), rs.getString(2), rs.getString(4),
+						추천인가져오기(rs.getInt(1)), getCommentsById(bid));
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 
-	public ArrayList<Integer> 추천인가져오기(int bid){
+	public ArrayList<Integer> 추천인가져오기(int bid) {
 		System.out.println("db.추천인가져오기");
 		String q = "select uid from cutes where bid=?";
-		ArrayList<Integer> list= new ArrayList<>();
+		ArrayList<Integer> list = new ArrayList<>();
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
 			p.setInt(1, bid);
 			ResultSet rs = p.executeQuery();
-			while(rs.next()){
+			while (rs.next()) {
 				list.add(rs.getInt(1));
 			}
 		} catch (SQLException e) {
@@ -596,44 +602,46 @@ public class DBAdapter {
 		}
 		return list;
 	}
-	public void insertComment(CommentItem item){
-		
+
+	public void insertComment(CommentItem item) {
+
 		String q = "insert into comments (bid,uid,comment) values(?,?,?)";
 		System.out.println("db.insertcomment");
- 		try {
+		try {
 			PreparedStatement p = conn.prepareStatement(q);
 			p.setInt(1, item.getBid());
 			p.setInt(2, item.getUid());
 			p.setString(3, item.getComment());
 			System.out.println(p.toString());
 			p.execute();
-			
+
 		} catch (SQLException e) {
- 			e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
-	
-	public ArrayList<CommentItem> getCommentsById(int bid){
+
+	public ArrayList<CommentItem> getCommentsById(int bid) {
 		System.out.println("db.getCommentById");
-		String q ="select u.nick , u.pic , c.comment from users u, comments c where c.bid=? and c.uid=u.uid";
+		String q = "select u.nick , u.pic , c.comment from users u, comments c where c.bid=? and c.uid=u.uid";
 		ArrayList<CommentItem> list = new ArrayList<CommentItem>();
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
 			p.setInt(1, bid);
-			
+
 			ResultSet rs = p.executeQuery();
-			while(rs.next()){
-				list.add(new CommentItem(rs.getString(1), rs.getString(3), rs.getBytes(2)));
+			while (rs.next()) {
+				list.add(new CommentItem(rs.getString(1), rs.getString(3), rs
+						.getBytes(2)));
 			}
-			
+
 		} catch (SQLException e) {
- 			e.printStackTrace();
+			e.printStackTrace();
 		}
 		return list;
-		
+
 	}
-	
-	public void insertCute(int bid, int uid){
+
+	public void insertCute(int bid, int uid) {
 		System.out.println("db.insertCute");
 		String q = "insert into cutes values(?,?)";
 		try {
@@ -643,10 +651,11 @@ public class DBAdapter {
 			System.out.println(p.toString());
 			p.execute();
 		} catch (SQLException e) {
- 			e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
-	public void deleteCute(int bid, int uid){
+
+	public void deleteCute(int bid, int uid) {
 		System.out.println("db.deletecute");
 		String q = "delete from cutes where bid=? and uid=?";
 		try {
@@ -656,23 +665,24 @@ public class DBAdapter {
 			System.out.println(p.toString());
 			p.execute();
 		} catch (SQLException e) {
- 			e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
-	
-	public ArrayList<String> getDid(){
+
+	public ArrayList<String> getDid() {
+
 		ArrayList<String> list = new ArrayList<String>();
-		String q= "select did from users";
+		String q = "select did from users";
 		try {
 			PreparedStatement p = conn.prepareStatement(q);
 			ResultSet rs = p.executeQuery();
-			while(rs.next())
+			// while(rs.next()) //TODO 여기 수정해야돼
+			if (rs.next())
 				list.add(rs.getString(1));
 		} catch (SQLException e) {
- 			e.printStackTrace();
+			e.printStackTrace();
 		}
 		return list;
 	}
-	
-	
+
 }

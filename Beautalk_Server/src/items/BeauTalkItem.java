@@ -7,100 +7,99 @@ import java.util.ArrayList;
  */
 public class BeauTalkItem {
 
-    private int id, idx;
-    private byte[] pic;
-    private String memo, title, nickname;
-    private ArrayList<Integer> list;
-    private ArrayList<BeauTalkItem> set;
-    private ArrayList<CommentItem> comments;
-    private boolean isCute;
+	private int id, idx;
+	private byte[] pic;
+	private String memo, title, nickname;
+	private ArrayList<Integer> list;
+	private ArrayList<BeauTalkItem> set;
+	private ArrayList<CommentItem> comments;
+	private boolean isCute;
 
-    public BeauTalkItem(int id, int idx, boolean isCute) {
-        this.id = id;
-        this.idx = idx;
-        this.isCute = isCute;
-    }
+	public BeauTalkItem(int id, int idx, boolean isCute) {
+		this.id = id;
+		this.idx = idx;
+		this.isCute = isCute;
+	}
 
-    public BeauTalkItem(int id) {
-        //  read --------->>
-        this.id = id;
-    }
+	public BeauTalkItem(int id) {
+		// read --------->>
+		this.id = id;
+	}
 
-    public BeauTalkItem(int idx, ArrayList<BeauTalkItem> set) {
-        // <<------------response
-        this.idx = idx;
-        this.set = set;
-    }
+	public BeauTalkItem(int idx, ArrayList<BeauTalkItem> set) {
+		// <<------------response
+		this.idx = idx;
+		this.set = set;
+	}
 
-    public BeauTalkItem(int id, byte[] pic, String memo, String title, String nickname, ArrayList<Integer> list) {
+	public BeauTalkItem(int id, byte[] pic, String nickname,
+			ArrayList<Integer> list) {
+		// <<------- response item
+		this.id = id;
+		this.pic = pic;
+		this.nickname = nickname;
+		this.list = list;
+	}
 
-        // << ----------- response item
-        this.id = id;
-        this.pic = pic;
-        this.memo = memo;
-        this.title = title;
-        this.nickname = nickname;
-        this.list = list;
-    }
+	public BeauTalkItem(int id, byte[] pic, String memo, String title,
+			String nickname, ArrayList<Integer> list,
+			ArrayList<CommentItem> comments) {
+		// << ----------- response item
 
-    public BeauTalkItem(int id, byte[] pic, String memo, String title, String nickname, ArrayList<Integer> list, ArrayList<CommentItem> comments) {
-        // << ----------- response item
+		this.id = id;
+		this.pic = pic;
+		this.memo = memo;
+		this.title = title;
+		this.nickname = nickname;
+		this.list = list;
+		this.comments = comments;
+	}
 
-        this.id = id;
-        this.pic = pic;
-        this.memo = memo;
-        this.title = title;
-        this.nickname = nickname;
-        this.list = list;
-        this.comments = comments;
-    }
+	public BeauTalkItem(byte[] pic, String memo, String title, String nickname) {
+		// write ----------->>
+		this.pic = pic;
+		this.memo = memo;
+		this.title = title;
+		this.nickname = nickname;
+	}
 
-    public BeauTalkItem(byte[] pic, String memo, String title, String nickname) {
-        // write ----------->>
-        this.pic = pic;
-        this.memo = memo;
-        this.title = title;
-        this.nickname = nickname;
-    }
+	public int getIdx() {
+		return idx;
+	}
 
+	public boolean isCute() {
+		return isCute;
+	}
 
-    public int getIdx() {
-        return idx;
-    }
+	public ArrayList<CommentItem> getComments() {
+		return comments;
+	}
 
-    public boolean isCute() {
-        return isCute;
-    }
+	public byte[] getPic() {
+		return pic;
+	}
 
-    public ArrayList<CommentItem> getComments() {
-        return comments;
-    }
+	public String getMemo() {
+		return memo;
+	}
 
-    public byte[] getPic() {
-        return pic;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public String getMemo() {
-        return memo;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public String getNickname() {
+		return nickname;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public ArrayList<Integer> getList() {
+		return list;
+	}
 
-    public String getNickname() {
-        return nickname;
-    }
-
-    public ArrayList<Integer> getList() {
-        return list;
-    }
-
-    public ArrayList<BeauTalkItem> getSet() {
-        return set;
-    }
+	public ArrayList<BeauTalkItem> getSet() {
+		return set;
+	}
 }
